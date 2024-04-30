@@ -10,31 +10,34 @@
  */
 void insertion_sort_list(listint_t **list)
 {
-
-	listint_t *current = (*list)->next;
-	listint_t *temp = current;
-
+	listint_t *current, *sorted, *unsorted;
 	if (list == NULL || *list == NULL || (*list)->next == NULL)
-		return;
+		 return;
+    current = (*list)->next; /* Start with the second node */
+    while (current != NULL)
+    {
+        sorted = current->prev; /* Start from the last sorted node */
+        unsorted = current;     /* Node to be inserted into the sorted part */
 
-	current = (*list)->next;
-	while (current != NULL)
-	{
-		
-		while (temp->prev != NULL && temp ->n < temp->prev->n)
-		{
-			temp->prev->next = temp->next;
-			if (temp->next != NULL)
-				temp->next->prev = temp->prev;
-			temp->next = temp->prev;
-			temp->prev = temp->prev->prev;
-			temp->next->prev = temp;
-			if (temp->prev != NULL)
-				temp->prev->next = temp;
-			else
-				*list = temp;
-			print_list(*list);
-		}
-		current = current->next;
-	}
-}	
+        /* Move the unsorted node to its correct position in the sorted part */
+        while (sorted != NULL && sorted->n > unsorted->n)
+        {
+            /* Swap unsorted and sorted nodes */
+            if (unsorted->next != NULL)
+                unsorted->next->prev = sorted;
+            if (sorted->prev != NULL)
+                sorted->prev->next = unsorted;
+            else
+                *list = unsorted;
+            sorted->next = unsorted->next;
+            unsorted->prev = sorted->prev;
+            unsorted->next = sorted;
+            sorted->prev = unsorted;
+
+            print_list(*list); /* Print the list after each swap */
+            sorted = unsorted->prev; /* Update sorted pointer */
+        }
+
+        current = current->next; /* Move to the next unsorted node */
+    }
+}
